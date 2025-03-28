@@ -56,11 +56,9 @@ public class Main extends Application{
     Bookstore bookstore = new Bookstore();
     ArrayList<Customer> cList = new ArrayList<Customer>();
     ArrayList<Book> bList = new ArrayList<Book>();
-    //NOT SURE HOW CHECKOUT GONNA BE IMPLEMENTED, SO CHANGE BOOKSTORE LATER 
-    //currently uses arraylist, maybe just add em to the total when you select them ?
     ArrayList<Book> shoppingCart = new ArrayList<Book>(); //for totaling picked books
-   
     int totalCost;
+    
     //Customer stuff
     Customer curUser; //the current user using the account
     String dispUsername = "default";
@@ -69,7 +67,7 @@ public class Main extends Application{
     
     //labels
     Label custWelcome,custTC,custPrice;
-        //--------------------------------------------------------------------------------------------------
+
     //Tables
     TableView<Book> custBookList;
     TableView<Book> adminBookList;
@@ -98,6 +96,7 @@ public class Main extends Application{
         //stores in file when done
         bookstore.storeData(cList,bList);
     }
+    
     //for displaying purposes while I figure this shit out
     public void updateUser(Customer c){
        dispUsername = c.getUsername();
@@ -114,6 +113,7 @@ public class Main extends Application{
             }
         }
     }
+    
     //Deletes Books from a List
     public void deleteBooks(ArrayList<Book> books){
         for(Book b: books){
@@ -123,6 +123,7 @@ public class Main extends Application{
             }
         }
     }
+    
     //Deletes Customers from a List
     public void deleteCustomers(ArrayList<Customer> customers){
         for(Customer c: customers){
@@ -247,7 +248,6 @@ public class Main extends Application{
         custBot2.getChildren().add(redeemBuy);
         custBot3.getChildren().add(logoutCust);
         customerBottom.getChildren().addAll(custBot1, custBot2, custBot3);
-        customerMid.getChildren().add(custBookList);
         customerBottom.setPadding(new Insets(10, 0, 10, 0));
         customerTop.setPadding(new Insets(0, 0, 10, 0));
         
@@ -255,7 +255,6 @@ public class Main extends Application{
         custBookList.setMaxWidth(227);
         custStart.setTop(customerTop);
         custStart.setBottom(customerBottom);
-        custStart.setCenter(customerMid);
        
         //updates table with current books
         custBookList.setItems(FXCollections.observableArrayList(bList));
@@ -406,16 +405,20 @@ public class Main extends Application{
 
         //creating the panes and it's properties
         
-        sceneOneCreation(pane);//login Screen
-        sceneTwoCreation(pane2);//admin choice screen
-        sceneThreeCreation(pane3,bList); //This is the Customer buy screen
-        sceneFourCreation(pane4);//Customer Checkout 
+        sceneOneCreation(pane);     //login Screen
+        sceneTwoCreation(pane2);    //admin choice screen
         
-        sceneFiveCreation(pane5,bList);//Admin Book
+        sceneThreeCreation(pane3,bList);    //This is the Customer buy screen
+        customerMid.getChildren().add(custBookList);
+        pane3.setCenter(customerMid);
+
+        sceneFourCreation(pane4);   //Customer Checkout 
+         
+        sceneFiveCreation(pane5,bList);     //Admin Book
         adminTop.getChildren().add(adminBookList);
         pane5.setTop(adminTop);
         
-        sceneSixCreation(pane6,cList);//Admin Customer
+        sceneSixCreation(pane6,cList);      //Admin Customer
         adminCustTop.getChildren().add(customerList);
         pane6.setTop(adminCustTop);
         
@@ -544,8 +547,12 @@ public class Main extends Application{
                 Customer newCust = new Customer(newUser, newPass, 0);
                 newCust.updateStatus();
                 cList.add(newCust);
-                //bookstore.storeData(cList, bList);
-                //ObservableList<Customer> customers = FXCollections.observableArrayList(cList);
+                
+                //clearing the textfields
+                addUsername.clear();
+                addPassword.clear();
+                
+                //updates customerlist for Admin
                 customerList.setItems(FXCollections.observableArrayList(cList));
                 adminCustTop.getChildren().clear();
                 adminCustTop.getChildren().add(customerList);
@@ -562,8 +569,10 @@ public class Main extends Application{
                 
                 Book newBook = new Book(bookName, bookPrice);
                 bList.add(newBook);
-                //bookstore.storeData(cList, bList);
-                //ObservableList<Book> books = FXCollections.observableArrayList(bList);
+                
+                //clearing textfields
+                name.clear();
+                price.clear();
                 
                 //Updates BookList for Admin and Customer
                 adminBookList.setItems(FXCollections.observableArrayList(bList));
