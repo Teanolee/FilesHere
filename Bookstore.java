@@ -135,7 +135,7 @@ public class Bookstore {
      //mainly managing thier points
     public int redeemPoints(Customer c,int total){
        int points = c.getPoints();
-       int finalTotal = total - points/100;
+       int finalTotal = total - (points/100);
        if (finalTotal<0){
            c.setPoints(-1*finalTotal*100);//removes used points 
        }else{
@@ -143,14 +143,49 @@ public class Bookstore {
        }
        return 0;//totalCost
     }
+    //Earned points for checkout
+    private int calculateEarnedPoints(int sum){
+        return sum*10;
+    }
     //handles checking out the customer 
-    //assumption that we have infinite stock
-    public void checkout(Customer c,ArrayList<Book> books){
-        int total=totalCost(books);
-        if ((c.getPoints()/100)>= total){
-            redeemPoints(c,total);
-        }else{
-            c.setPoints(c.getPoints()+earnedPoints(total));//adds earned points to total points
+    // Returns the total cost to be paid.
+       public int checkoutCash(Customer c, ArrayList<Book> cart) {
+        int total = totalCost(cart);
+        if (total > 0) { // Only add points if something was actually bought
+             c.setPoints(c.getPoints() + calculateEarnedPoints(total)); // Adds earned points to total points
+             c.updateStatus(); // Update status based on new points total
+        }
+        // In a real system, payment processing would happen here.
+        return total; // The amount the customer needs to pay
+    }
+
+
+    //  Checkout using ONLY points.
+    // Succeeds ONLY if the customer has enough points to cover the ENTIRE cost.
+    // If successful, deducts the points and updates status.
+    // If unsuccessful, makes no changes to the customer's account.
+    // Returns true if the purchase was successful (paid fully with points), false otherwise.
+    public boolean checkoutRedeem(Customer c, ArrayList<Book> cart) {
+        int total = totalCost(cart);
+        if (total == 0) {
+            System.out.println("Cart is empty. Nothing to redeem.");
+            return true; // Nothing to buy, consider it successful (or neutral).
+        }
+
+        int pointsAvailable = c.getPoints(); // Get current points
+        int valueOfPoints = pointsAvailable / 100; // Calculate $ value of points
+
+        System.out.println("Attempting redeem: Cart Total=$" + total + ", Points Value=$" + valueOfPoints + " ("+pointsAvailable+" points)"); // Debugging
+
+        if (valueOfPoints >= total) {
+            int pointsToUse = total * 100; 
+            c.setPoints(pointsAvailable - pointsToUse); 
+            c.updateStatus(); // Update status based on new points total
+            System.out.println("Redeem successful. Points remaining: " + c.getPoints()); // Debugging
+            return true; // Purchase successful using points
+        } else {
+            System.out.println("Redeem failed: Insufficient points."); // Debugging
+            return false; // Purchase failed due to insufficient points
         }
     }
 /*
