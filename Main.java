@@ -94,6 +94,7 @@ public class Main extends Application{
         //stores in file when done
         bookstore.storeData(cList,bList);
     }
+    
     //for displaying purposes while I figure this shit out
     public void updateUser(Customer c){
        dispUsername = c.getUsername();
@@ -110,6 +111,7 @@ public class Main extends Application{
             }
         }
     }
+    
     //Deletes Books from a List
     public void deleteBooks(ArrayList<Book> books){
         for(Book b: books){
@@ -119,6 +121,7 @@ public class Main extends Application{
             }
         }
     }
+    
     //Deletes Customers from a List
     public void deleteCustomers(ArrayList<Customer> customers){
         for(Customer c: customers){
@@ -126,6 +129,20 @@ public class Main extends Application{
                 customerList.getItems().remove(c);
                 customers.remove(c);//removes all books in books from delList
             }
+        }
+    }
+    
+    // Method to clear all book selections
+    public void clearBookSelections(ArrayList<Book> books) {
+        for (Book book : books) {
+            book.setAvailable(false);
+        }
+    }
+    
+    //Method to clear all customer selections
+    public void clearCustomerSelections(ArrayList<Customer> cust) {
+        for (Customer customer : cust) {
+            customer.setAvailable(false);
         }
     }
     
@@ -457,7 +474,9 @@ public class Main extends Application{
                         updateUser(curUser);
                         custWelcome.setText("Welcome " + dispUsername + " you have: " + dispPoints + " Points. "
                         + "Your Status is: " + dispStatus);
+                        custBookList.setItems(FXCollections.observableArrayList(bList));
                         displayScreen.setScene(customerStartScreen);
+                        
                     }else{
                          errorLabel.setText("Hey buddy ur password or username is wrong");       
                                 }    
@@ -475,6 +494,7 @@ public class Main extends Application{
                 displayScreen.setScene(adminBookScreen);
             }
         });
+        
         //Customer Button for admin
         btn3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -492,15 +512,24 @@ public class Main extends Application{
         logoutAdmin.setOnAction(e -> {
             //stores in file when done
             bookstore.storeData(cList,bList);
+            //clearBookSelections(bList);
             displayScreen.setScene(loginScreen);});
         
         logoutCust.setOnAction(e -> {
             reset();//resets everything
-            displayScreen.setScene(loginScreen);
-                });
+            clearBookSelections(bList);
+            displayScreen.setScene(loginScreen);});
 
-        back.setOnAction(e -> displayScreen.setScene(adminScreen));
-        back2.setOnAction(e -> displayScreen.setScene(adminScreen));
+        //admin book screen
+        back.setOnAction(e -> {
+            clearBookSelections(bList);
+            displayScreen.setScene(adminScreen);       
+            });
+        
+        //admin cust screen
+        back2.setOnAction(e -> {
+            clearCustomerSelections(cList);
+            displayScreen.setScene(adminScreen);});
         
         //Buy screen with CAD
         EventHandler<ActionEvent> moneyBuy = new EventHandler<ActionEvent>(){
@@ -515,7 +544,6 @@ public class Main extends Application{
                 curUser.updateStatus();
                 custTC.setText("Total cost of Books: "+totalCost);//changes respective labels
                 custPrice.setText("Total Points: "+curUser.getPoints()+" Status: "+curUser.getStatus());
-                
                 displayScreen.setScene(customerCostScreen);
             }
         };
@@ -540,6 +568,7 @@ public class Main extends Application{
             // Points and status were already updated within checkoutRedeem
             custPrice.setText("Points Remaining: "+curUser.getPoints()+" Status: "+curUser.getStatus());
             // Proceed to the confirmation screen
+            clearBookSelections(bList);
             displayScreen.setScene(customerCostScreen);
         } else {
             errorLabel1.setText("Insufficient points to redeem for the selected books."); 
@@ -559,8 +588,12 @@ public class Main extends Application{
                 Customer newCust = new Customer(newUser, newPass, 0);
                 newCust.updateStatus();
                 cList.add(newCust);
-                //bookstore.storeData(cList, bList);
-                //ObservableList<Customer> customers = FXCollections.observableArrayList(cList);
+                
+                //clearing the textfields
+                addUsername.clear();
+                addPassword.clear();
+                
+                //updates customerlist for Admin
                 customerList.setItems(FXCollections.observableArrayList(cList));
                 adminCustTop.getChildren().clear();
                 adminCustTop.getChildren().add(customerList);
@@ -577,8 +610,10 @@ public class Main extends Application{
                 
                 Book newBook = new Book(bookName, bookPrice);
                 bList.add(newBook);
-                //bookstore.storeData(cList, bList);
-                //ObservableList<Book> books = FXCollections.observableArrayList(bList);
+                
+                //clearing textfields
+                name.clear();
+                price.clear();
                 
                 //Updates BookList for Admin and Customer
                 adminBookList.setItems(FXCollections.observableArrayList(bList));
@@ -599,14 +634,15 @@ public class Main extends Application{
             }
         };
         delete.setOnAction(bookDel); //delete button for Books
-        //Customer Back Button
         
+        //Customer Back Button
         back3.setOnAction(e -> {
             reset();
             errorLabel1.setText("");
             updateUser(curUser);
             custWelcome.setText("Welcome " + dispUsername + " you have: " + dispPoints + " Points. "
                         + "Your Status is: " + dispStatus);
+            clearBookSelections(bList);
             displayScreen.setScene(customerStartScreen); // Go back to Customer Start Screen
         });     
         
