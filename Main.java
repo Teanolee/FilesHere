@@ -1,4 +1,4 @@
-//package project;
+package project;
 // ^ don't forget to change this
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
 //import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.FlowPane;
-//import javafx.geometry.Insets;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.geometry.Orientation;
@@ -77,16 +77,17 @@ public class Main extends Application{
     
     //global instance variables 
     TextField username, password, name, price, addUsername, addPassword; 
-    Button btn, btn2, btn3, logout,logoutAdmin, 
+    Button btn, btn2, btn3, logout,logoutAdmin,logoutCust, 
             buy, redeemBuy, add, back, back2, 
             delete, delete2, addCust;
-    HBox button, button2, button3, logoutH, customerTop, 
-            customerBottom, customerTop2, customerBottom2,
-            customerMid2, adminBottom, adminMid, adminMidN,
-            adminMidP, adminMidB, adminCustMid, adminCustBot,
+    HBox button, button2, button3, logoutH, customerTop, customerMid,
+            customerBottom, custBot1, custBot2, custBot3, customerTop2, customerBottom2,
+            customerMid2, adminBottom, adminTop, adminMid, adminMidN,
+            adminMidP, adminMidB, adminCustTop, adminCustMid, adminCustBot,
             adminMidUser, adminMidPass, adminMidB2;
-
-    VBox adminBook, adminCust;
+    
+    VBox buyText;
+  
     //RESET
     public void reset(){
         shoppingCart.clear();
@@ -131,12 +132,14 @@ public class Main extends Application{
             }
         }
     }
+    
     public void createButtons(){
             btn = new Button(); 
             btn2 = new Button(); 
             btn3 = new Button();
             logout = new Button(); 
             logoutAdmin = new Button();
+            logoutCust = new Button();
             buy = new Button();
             redeemBuy = new Button();
             delete = new Button(); 
@@ -154,6 +157,7 @@ public class Main extends Application{
         btn3.setText("Customers");
         logout.setText("Logout"); 
         logoutAdmin.setText("Logout"); 
+        logoutCust.setText("Logout");
         buy.setText("Buy");
         redeemBuy.setText("Redeem and Buy"); 
         delete.setText("Delete"); 
@@ -168,16 +172,17 @@ public class Main extends Application{
 
     public void createHBox(){
         button = new HBox(); button2 = new HBox(); button3 = new HBox();
-        logoutH = new HBox(); customerTop = new HBox(); customerBottom = new HBox(75);
+        logoutH = new HBox(); customerTop = new HBox(); customerBottom = new HBox(50);
         customerTop2 = new HBox(); customerMid2 = new HBox(); customerBottom2 = new HBox();
+        customerMid = new HBox(); custBot1 = new HBox(); custBot2 = new HBox(); custBot3 = new HBox();
 
         adminMid = new HBox(50); adminMidN = new HBox(10);
         adminMidP = new HBox(10); adminMidB = new HBox(10);
-        adminBottom = new HBox(75);
+        adminBottom = new HBox(75); adminTop = new HBox();
 
         adminCustMid = new HBox(50); adminMidUser = new HBox(10);
         adminMidPass = new HBox(10); adminMidB2 = new HBox(10);
-        adminCustBot = new HBox(75); 
+        adminCustBot = new HBox(75); adminCustTop = new HBox();
     }
 
     public void createTextFields(){
@@ -211,10 +216,11 @@ public class Main extends Application{
     }
 
     public void sceneThreeCreation(BorderPane custStart,ArrayList<Book> bList){
+
+        custBookList = new TableView<>();
         custWelcome = new Label("Welcome " + dispUsername+" you have: " + dispPoints + " Points. "
                 + "Your Status is: " + dispStatus);
         
-        custBookList = new TableView<>();
         custBookList.setEditable(true);//ALLOWS THE TABLE TO BE EDITABLE
         //BOOK TITLE COLLUMN
         TableColumn<Book, String> custCol1 = new TableColumn<>("Book Title");
@@ -230,50 +236,58 @@ public class Main extends Application{
                 cellData.getValue().availableProperty());
         //sets checkboxes
         custCol3.setCellFactory(CheckBoxTableCell.forTableColumn(custCol3));
-
+        
+        customerMid.setAlignment(javafx.geometry.Pos.CENTER);
         customerBottom.setAlignment(javafx.geometry.Pos.CENTER);
         customerTop.setAlignment(javafx.geometry.Pos.CENTER);
-
+        
         custBookList.getColumns().addAll(custCol1, custCol2, custCol3);
         customerTop.getChildren().addAll(custWelcome);
-        customerBottom.getChildren().addAll(buy, redeemBuy, logout);
-        //BookTable.getChildren().addAll(custBookList);
+        custBot1.getChildren().add(buy);
+        custBot2.getChildren().add(redeemBuy);
+        custBot3.getChildren().add(logoutCust);
+        customerBottom.getChildren().addAll(custBot1, custBot2, custBot3);
+        customerMid.getChildren().add(custBookList);
+        customerBottom.setPadding(new Insets(10, 0, 10, 0));
+        customerTop.setPadding(new Insets(0, 0, 10, 0));
+        
+        custBookList.setMaxHeight(300);
+        custBookList.setMaxWidth(227);
         custStart.setTop(customerTop);
-        custStart.setCenter(custBookList);
         custStart.setBottom(customerBottom);
-
-        //JUST TEST DATA
-       // books = FXCollections.observableArrayList(bList);
-        /*
-        ObservableList<Book> books = FXCollections.observableArrayList(
-            new Book("Joe", 1, true),
-            new Book("My", 2, false),
-            new Book("Nuts", 3, true)
-        );
-        */
+        custStart.setCenter(customerMid);
+       
         //updates table with current books
         custBookList.setItems(FXCollections.observableArrayList(bList));
     }
 
     public void sceneFourCreation(BorderPane custBuy){
+        
+        buyText = new VBox();
         custTC = new Label ("Total cost of Books: " + "XX");
         custPrice = new Label ("Total Points: " + "XX " + "Status: " + "XX");
 
         customerTop2.setAlignment(javafx.geometry.Pos.CENTER);
         customerBottom2.setAlignment(javafx.geometry.Pos.CENTER);
         customerMid2.setAlignment(javafx.geometry.Pos.CENTER);
+        buyText.setAlignment(javafx.geometry.Pos.CENTER);
 
-        customerTop2.getChildren().addAll(custTC);
-        customerMid2.getChildren().addAll(custPrice);
-        customerBottom2.getChildren().addAll(logout);
-        custBuy.setTop(customerTop2);
-        custBuy.setCenter(customerMid2);
-        custBuy.setBottom(customerBottom2);
+        customerTop2.getChildren().add(custTC);
+        customerMid2.getChildren().add(custPrice);
+        customerBottom2.getChildren().add(logout);
+
+        buyText.getChildren().addAll(customerTop2, customerMid2, customerBottom2);
+        
+        customerTop2.setPadding(new Insets(10, 0, 10, 0));
+        customerMid2.setPadding(new Insets(10, 0, 10, 0));
+        customerBottom2.setPadding(new Insets(10, 0, 10, 0));
+
+        
+        custBuy.setCenter(buyText);
     }
 
     public void sceneFiveCreation(BorderPane adminBookScreen,ArrayList<Book> bList){
 
-        adminBook = new VBox(20);
         adminBookList = new TableView<>();
         adminBookList.setEditable(true);
         //BOOK TITLE
@@ -289,38 +303,37 @@ public class Main extends Application{
         adminCol3.setCellValueFactory(cellData -> //funny
                 cellData.getValue().availableProperty());
         adminCol3.setCellFactory(CheckBoxTableCell.forTableColumn(adminCol3));
-
-        adminBook.setAlignment(javafx.geometry.Pos.CENTER);
+        
+        adminTop.setAlignment(javafx.geometry.Pos.CENTER);
         adminBottom.setAlignment(javafx.geometry.Pos.CENTER);        
         adminMid.setAlignment(javafx.geometry.Pos.CENTER);  
-
+        
+        
         adminBookList.getColumns().addAll(adminCol1, adminCol2, adminCol3);
         adminMidN.getChildren().addAll(new Label("Book name"), name);
         adminMidP.getChildren().addAll(new Label("Book Price"), price);
         adminMidB.getChildren().add(add);
         adminMid.getChildren().addAll(adminMidN, adminMidP, adminMidB);
-        adminBook.getChildren().add(adminMid);
         adminBottom.getChildren().addAll(delete, back);
-        adminBookScreen.setTop(adminBookList);
-        adminBookScreen.setCenter(adminBook);
+        
+        //setting max table display height/width
+        adminBookList.setMaxHeight(300);
+        adminBookList.setMaxWidth(227);
+        
+        //padding for Middle and Bottom
+        adminMid.setPadding(new Insets(10, 0, 0, 0));
+        adminBottom.setPadding(new Insets(0, 0, 10, 0));
+        
+        adminBookScreen.setCenter(adminMid);
         adminBookScreen.setBottom(adminBottom);
 
-        //TEST DATA
-        //ObservableList<Book> books = FXCollections.observableArrayList(bList);
-        /*
-        ObservableList<Book> books = FXCollections.observableArrayList(
-            new Book("Joe", 1, true),
-            new Book("My", 2, false),
-            new Book("Nuts", 3, true)
-        );
-        */
         adminBookList.setItems(FXCollections.observableArrayList(bList));
 
 
-    }
+    }   
 
     public void sceneSixCreation(BorderPane adminCustScreen,ArrayList<Customer> cList){
-        adminCust = new VBox(20);
+
         customerList = new TableView<>();
         customerList.setEditable(true);
 
@@ -336,10 +349,10 @@ public class Main extends Application{
         TableColumn<Customer, Boolean> adminCustCol4 = new TableColumn<>("Select");
         adminCustCol4.setCellValueFactory(cellData -> 
                 cellData.getValue().availableProperty());
-          //sets checkboxes
+        //sets checkboxes
         adminCustCol4.setCellFactory(CheckBoxTableCell.forTableColumn(adminCustCol4));
 
-        adminCust.setAlignment(javafx.geometry.Pos.CENTER);
+        adminCustTop.setAlignment(javafx.geometry.Pos.CENTER);
         adminCustBot.setAlignment(javafx.geometry.Pos.CENTER);        
         adminCustMid.setAlignment(javafx.geometry.Pos.CENTER);
 
@@ -348,21 +361,19 @@ public class Main extends Application{
         adminMidPass.getChildren().addAll(new Label("Password"), addPassword);
         adminMidB2.getChildren().add(addCust);
         adminCustMid.getChildren().addAll(adminMidUser, adminMidPass, adminMidB2);
-        adminCust.getChildren().add(adminCustMid);
         adminCustBot.getChildren().addAll(delete2, back2);
-        adminCustScreen.setTop(customerList);
-        adminCustScreen.setCenter(adminCust);
+        
+        //setting max table display height/width
+        customerList.setMaxHeight(300);
+        customerList.setMaxWidth(286);
+        
+        //padding for Middle and Bottom
+        adminCustMid.setPadding(new Insets(10, 0, 0, 0));
+        adminCustBot.setPadding(new Insets(0, 0, 10, 0));
+        
+        adminCustScreen.setCenter(adminCustMid);
         adminCustScreen.setBottom(adminCustBot);
 
-        //TEST DATA
-        //ObservableList<Customer> customers = FXCollections.observableArrayList(cList);
-        /*
-        ObservableList<Customer> customers = FXCollections.observableArrayList(
-            new Customer("Joe", "mynuts213", 0),
-            new Customer("My", "fatnuts", 1000),
-            new Customer("Nuts", "cockandballs", 10000)
-        );
-        */
         customerList.setItems(FXCollections.observableArrayList(cList));
     }
 
@@ -370,10 +381,9 @@ public class Main extends Application{
     public void start(Stage displayScreen) {
         //java stuff
         //loads save data
-        bookstore.loadCustomers(cList);//loads from saved data
+        bookstore.loadCustomers(cList);
         bookstore.loadBooks(bList);
-        //bookstore.loadBooks(shoppingCart); //buys whole store TESTING
-          
+        
         //Creating Buttons
         createButtons();
         setButtonText();
@@ -400,16 +410,22 @@ public class Main extends Application{
         sceneTwoCreation(pane2);//admin choice screen
         sceneThreeCreation(pane3,bList); //This is the Customer buy screen
         sceneFourCreation(pane4);//Customer Checkout 
+        
         sceneFiveCreation(pane5,bList);//Admin Book
+        adminTop.getChildren().add(adminBookList);
+        pane5.setTop(adminTop);
+        
         sceneSixCreation(pane6,cList);//Admin Customer
-
+        adminCustTop.getChildren().add(customerList);
+        pane6.setTop(adminCustTop);
+        
         //different scenes 
         Scene loginScreen = new Scene(pane, 300, 250);
         Scene adminScreen = new Scene(pane2, 300, 250);
         Scene customerStartScreen = new Scene(pane3, 400, 350);
         Scene customerCostScreen = new Scene(pane4, 300, 250);
-        Scene adminBookScreen = new Scene(pane5,600,475);
-        Scene adminCustScreen = new Scene(pane6, 600, 475);
+        Scene adminBookScreen = new Scene(pane5,600,380);
+        Scene adminCustScreen = new Scene(pane6, 600, 380);
 
         //setting up the scenes (The important code) 
         displayScreen.setTitle("Bookstore");
@@ -429,19 +445,15 @@ public class Main extends Application{
      
                     displayScreen.setScene(adminScreen);
                 } else {
-                    //Allows always transfer screens DELETE THIS LATER
-                    //displayScreen.setScene(customerStartScreen); //FOR ACCESS PURPOSES DELETE LATER
-                    ///* //CODE FOR LOGGIN IN WITH ACCOUNT
+                    
                     curUser = bookstore.findAccount(user,pass,cList);
-                    //Customer temp = bookstore.findAccount(user,pass,cList);
                     if (curUser.getPoints() != -1){
                         updateUser(curUser);
-                        custWelcome.setText("Welcome " + dispUsername+" you have: " + dispPoints + " Points. "
-                + "Your Status is: " + dispStatus);
+                        custWelcome.setText("Welcome " + dispUsername + " you have: " + dispPoints + " Points. "
+                        + "Your Status is: " + dispStatus);
                         displayScreen.setScene(customerStartScreen);
+                        
                     }
-                    
-                    //*/
                 }
             }
         };
@@ -496,7 +508,7 @@ public class Main extends Application{
         
         buy.setOnAction(moneyBuy);//Purchase with CAD
         
-//Buying with points
+        //Buying with points
         EventHandler<ActionEvent> pointsBuy = new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
@@ -528,8 +540,8 @@ public class Main extends Application{
                 //bookstore.storeData(cList, bList);
                 //ObservableList<Customer> customers = FXCollections.observableArrayList(cList);
                 customerList.setItems(FXCollections.observableArrayList(cList));
-                //adminCustTop.getChildren().clear();
-                //adminCustTop.getChildren().add(customerList);
+                adminCustTop.getChildren().clear();
+                adminCustTop.getChildren().add(customerList);
             }
         };
         addCust.setOnAction(custAdd);
@@ -549,8 +561,8 @@ public class Main extends Application{
                 //Updates BookList for Admin and Customer
                 adminBookList.setItems(FXCollections.observableArrayList(bList));
                 custBookList.setItems(FXCollections.observableArrayList(bList));
-                //adminTop.getChildren().clear();
-                //adminTop.getChildren().add(adminBookList);
+                adminTop.getChildren().clear();
+                adminTop.getChildren().add(adminBookList);
             }
         };
         add.setOnAction(bookAdd);
