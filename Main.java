@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-//import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.FlowPane;
 import javafx.geometry.Insets;
@@ -21,11 +20,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
-//import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.cell.CheckBoxTableCell;
-//import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
 
@@ -56,9 +52,11 @@ public class Main extends Application{
     Bookstore bookstore = new Bookstore();
     ArrayList<Customer> cList = new ArrayList<Customer>();
     ArrayList<Book> bList = new ArrayList<Book>();
+    //NOT SURE HOW CHECKOUT GONNA BE IMPLEMENTED, SO CHANGE BOOKSTORE LATER 
+    //currently uses arraylist, maybe just add em to the total when you select them ?
     ArrayList<Book> shoppingCart = new ArrayList<Book>(); //for totaling picked books
+   
     int totalCost;
-    
     //Customer stuff
     Customer curUser; //the current user using the account
     String dispUsername = "default";
@@ -66,8 +64,8 @@ public class Main extends Application{
     String dispStatus = "default";
     
     //labels
-    Label custWelcome,custTC,custPrice;
-
+    Label custWelcome,custTC,custPrice,errorLabel,errorLabel1;
+        //--------------------------------------------------------------------------------------------------
     //Tables
     TableView<Book> custBookList;
     TableView<Book> adminBookList;
@@ -76,15 +74,15 @@ public class Main extends Application{
     //global instance variables 
     TextField username, password, name, price, addUsername, addPassword; 
     Button btn, btn2, btn3, logout,logoutAdmin,logoutCust, 
-            buy, redeemBuy, add, back, back2, 
+            buy, redeemBuy, add, back, back2,back3, 
             delete, delete2, addCust;
-    HBox button, button2, button3, logoutH, customerTop, customerMid,
+    HBox button, button2, button3, logoutH, customerMid,
             customerBottom, custBot1, custBot2, custBot3, customerTop2, customerBottom2,
             customerMid2, adminBottom, adminTop, adminMid, adminMidN,
             adminMidP, adminMidB, adminCustTop, adminCustMid, adminCustBot,
             adminMidUser, adminMidPass, adminMidB2;
     
-    VBox buyText;
+    VBox buyText, topContainer;
   
     //RESET
     public void reset(){
@@ -96,7 +94,6 @@ public class Main extends Application{
         //stores in file when done
         bookstore.storeData(cList,bList);
     }
-    
     //for displaying purposes while I figure this shit out
     public void updateUser(Customer c){
        dispUsername = c.getUsername();
@@ -113,7 +110,6 @@ public class Main extends Application{
             }
         }
     }
-    
     //Deletes Books from a List
     public void deleteBooks(ArrayList<Book> books){
         for(Book b: books){
@@ -123,7 +119,6 @@ public class Main extends Application{
             }
         }
     }
-    
     //Deletes Customers from a List
     public void deleteCustomers(ArrayList<Customer> customers){
         for(Customer c: customers){
@@ -147,6 +142,7 @@ public class Main extends Application{
             delete2 = new Button();
             back = new Button(); 
             back2 = new Button(); 
+            back3 = new Button();
             add = new Button(); 
             addCust = new Button();  
         }
@@ -167,14 +163,15 @@ public class Main extends Application{
         //just in case
         delete2.setText("Delete");
         back2.setText("Back");
+        back3.setText("Back");
         addCust.setText("Add");
 
     }
 
     public void createHBox(){
         button = new HBox(); button2 = new HBox(); button3 = new HBox();
-        logoutH = new HBox(); customerTop = new HBox(); customerBottom = new HBox(50);
-        customerTop2 = new HBox(); customerMid2 = new HBox(); customerBottom2 = new HBox();
+        logoutH = new HBox(); customerBottom = new HBox(50);
+        customerTop2 = new HBox(); customerMid2 = new HBox(); customerBottom2 = new HBox(50);
         customerMid = new HBox(); custBot1 = new HBox(); custBot2 = new HBox(); custBot3 = new HBox();
 
         adminMid = new HBox(50); adminMidN = new HBox(10);
@@ -193,6 +190,10 @@ public class Main extends Application{
         price = new TextField(); 
         addUsername = new TextField(); 
         addPassword = new TextField();
+        errorLabel = new Label("");
+        errorLabel1 = new Label("");// Initialize error label
+        errorLabel1.setStyle("-fx-text-fill: red;");
+        errorLabel.setStyle("-fx-text-fill: red;"); // Set text color to red
     }
 
     public void sceneOneCreation(FlowPane login){
@@ -202,6 +203,7 @@ public class Main extends Application{
         login.getChildren().addAll(new Label("Username"), username);
         login.getChildren().addAll(new Label("Password"), password);
         login.getChildren().addAll(button); 
+        login.getChildren().add(errorLabel);
     }
 
     public void sceneTwoCreation(FlowPane admin){
@@ -238,26 +240,29 @@ public class Main extends Application{
         //sets checkboxes
         custCol3.setCellFactory(CheckBoxTableCell.forTableColumn(custCol3));
         
+        topContainer = new VBox(5); // 5 is spacing between elements
+        topContainer.setAlignment(javafx.geometry.Pos.CENTER);
+        topContainer.getChildren().addAll(custWelcome, errorLabel1);
+    
         customerMid.setAlignment(javafx.geometry.Pos.CENTER);
         customerBottom.setAlignment(javafx.geometry.Pos.CENTER);
-        customerTop.setAlignment(javafx.geometry.Pos.CENTER);
-                
+    
         custBookList.getColumns().addAll(custCol1, custCol2, custCol3);
-        customerTop.getChildren().addAll(custWelcome);
-        customerMid.getChildren().add(custBookList);
         custBot1.getChildren().add(buy);
         custBot2.getChildren().add(redeemBuy);
         custBot3.getChildren().add(logoutCust);
         customerBottom.getChildren().addAll(custBot1, custBot2, custBot3);
+        customerMid.getChildren().add(custBookList);
         customerBottom.setPadding(new Insets(10, 0, 10, 0));
-        customerTop.setPadding(new Insets(0, 0, 10, 0));
-        
+
         custBookList.setMaxHeight(300);
         custBookList.setMaxWidth(227);
-        custStart.setTop(customerTop);
+
+        // Use the topContainer instead of just customerTop
+        custStart.setTop(topContainer);
         custStart.setBottom(customerBottom);
         custStart.setCenter(customerMid);
-
+    
         //updates table with current books
         custBookList.setItems(FXCollections.observableArrayList(bList));
     }
@@ -272,19 +277,18 @@ public class Main extends Application{
         customerBottom2.setAlignment(javafx.geometry.Pos.CENTER);
         customerMid2.setAlignment(javafx.geometry.Pos.CENTER);
         buyText.setAlignment(javafx.geometry.Pos.CENTER);
-
+        
         customerTop2.getChildren().add(custTC);
         customerMid2.getChildren().add(custPrice);
-        customerBottom2.getChildren().add(logout);
-
-        buyText.getChildren().addAll(customerTop2, customerMid2, customerBottom2);
+        customerBottom2.getChildren().addAll(back3, logout); // <-- Add back3 to bottom
         
+        buyText.getChildren().addAll(customerTop2, customerMid2, customerBottom2);
+
         customerTop2.setPadding(new Insets(10, 0, 10, 0));
         customerMid2.setPadding(new Insets(10, 0, 10, 0));
         customerBottom2.setPadding(new Insets(10, 0, 10, 0));
 
-        
-        custBuy.setCenter(buyText);
+    custBuy.setCenter(buyText);
     }
 
     public void sceneFiveCreation(BorderPane adminBookScreen,ArrayList<Book> bList){
@@ -407,19 +411,16 @@ public class Main extends Application{
 
         //creating the panes and it's properties
         
-        sceneOneCreation(pane);     //login Screen
-        sceneTwoCreation(pane2);    //admin choice screen
+        sceneOneCreation(pane);//login Screen
+        sceneTwoCreation(pane2);//admin choice screen
+        sceneThreeCreation(pane3,bList); //This is the Customer buy screen
+        sceneFourCreation(pane4);//Customer Checkout 
         
-        sceneThreeCreation(pane3,bList);    //This is the Customer buy screen
-
-
-        sceneFourCreation(pane4);   //Customer Checkout 
-         
-        sceneFiveCreation(pane5,bList);     //Admin Book
+        sceneFiveCreation(pane5,bList);//Admin Book
         adminTop.getChildren().add(adminBookList);
         pane5.setTop(adminTop);
         
-        sceneSixCreation(pane6,cList);      //Admin Customer
+        sceneSixCreation(pane6,cList);//Admin Customer
         adminCustTop.getChildren().add(customerList);
         pane6.setTop(adminCustTop);
         
@@ -435,8 +436,9 @@ public class Main extends Application{
         displayScreen.setTitle("Bookstore");
         displayScreen.setScene(loginScreen);
         displayScreen.show();
-
+        
         //button functions----------------------------------------------------------------------
+
         EventHandler<ActionEvent> loginEvent = new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent e){
@@ -455,10 +457,11 @@ public class Main extends Application{
                         updateUser(curUser);
                         custWelcome.setText("Welcome " + dispUsername + " you have: " + dispPoints + " Points. "
                         + "Your Status is: " + dispStatus);
-                        custBookList.setItems(FXCollections.observableArrayList(bList));
                         displayScreen.setScene(customerStartScreen);
-                        
-                    }
+                    }else{
+                         errorLabel.setText("Hey buddy ur password or username is wrong");       
+                                }    
+                    
                 }
             }
         };
@@ -472,7 +475,6 @@ public class Main extends Application{
                 displayScreen.setScene(adminBookScreen);
             }
         });
-
         //Customer Button for admin
         btn3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -509,7 +511,7 @@ public class Main extends Application{
                 //totals money needed
                 totalCost = bookstore.totalCost(shoppingCart); //calculates total cost
               
-                bookstore.checkout(curUser, shoppingCart);
+                bookstore.checkoutCash(curUser, shoppingCart);
                 curUser.updateStatus();
                 custTC.setText("Total cost of Books: "+totalCost);//changes respective labels
                 custPrice.setText("Total Points: "+curUser.getPoints()+" Status: "+curUser.getStatus());
@@ -522,21 +524,29 @@ public class Main extends Application{
         
         //Buying with points
         EventHandler<ActionEvent> pointsBuy = new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-                //Finds Books purchased
-                purchaseBooks(bList,shoppingCart);
-                //totals money needed
-                totalCost = 0; //calculates total cost
-                
-                bookstore.checkout(curUser, shoppingCart);
-                curUser.updateStatus();
-                custTC.setText("Total cost of Books: "+totalCost);//changes respective labels
-                custPrice.setText("Total Points: "+curUser.getPoints()+" Status: "+curUser.getStatus());
-                
-                displayScreen.setScene(customerCostScreen);
-            }
-        };
+        @Override
+        public void handle(ActionEvent event) {
+        //Finds Books purchased
+        purchaseBooks(bList,shoppingCart);
+        boolean redeemSuccessful = bookstore.checkoutRedeem(curUser, shoppingCart);
+        
+        if (redeemSuccessful) {
+            // Clear any previous error
+            errorLabel1.setText("");
+            // Purchase successful using points
+            totalCost = 0; // Cost paid by customer is $0
+            // Update labels for the results screen
+            custTC.setText("Total cost of Books: $0 (Paid with points)");
+            // Points and status were already updated within checkoutRedeem
+            custPrice.setText("Points Remaining: "+curUser.getPoints()+" Status: "+curUser.getStatus());
+            // Proceed to the confirmation screen
+            displayScreen.setScene(customerCostScreen);
+        } else {
+            errorLabel1.setText("Insufficient points to redeem for the selected books."); 
+            shoppingCart.clear();
+        }
+    }
+};
         redeemBuy.setOnAction(pointsBuy);//Purchase with Points
         
         //Add customers for admin
@@ -549,12 +559,8 @@ public class Main extends Application{
                 Customer newCust = new Customer(newUser, newPass, 0);
                 newCust.updateStatus();
                 cList.add(newCust);
-                
-                //clearing the textfields
-                addUsername.clear();
-                addPassword.clear();
-                
-                //updates customerlist for Admin
+                //bookstore.storeData(cList, bList);
+                //ObservableList<Customer> customers = FXCollections.observableArrayList(cList);
                 customerList.setItems(FXCollections.observableArrayList(cList));
                 adminCustTop.getChildren().clear();
                 adminCustTop.getChildren().add(customerList);
@@ -571,10 +577,8 @@ public class Main extends Application{
                 
                 Book newBook = new Book(bookName, bookPrice);
                 bList.add(newBook);
-                
-                //clearing textfields
-                name.clear();
-                price.clear();
+                //bookstore.storeData(cList, bList);
+                //ObservableList<Book> books = FXCollections.observableArrayList(bList);
                 
                 //Updates BookList for Admin and Customer
                 adminBookList.setItems(FXCollections.observableArrayList(bList));
@@ -595,6 +599,16 @@ public class Main extends Application{
             }
         };
         delete.setOnAction(bookDel); //delete button for Books
+        //Customer Back Button
+        
+        back3.setOnAction(e -> {
+            reset();
+            errorLabel1.setText("");
+            updateUser(curUser);
+            custWelcome.setText("Welcome " + dispUsername + " you have: " + dispPoints + " Points. "
+                        + "Your Status is: " + dispStatus);
+            displayScreen.setScene(customerStartScreen); // Go back to Customer Start Screen
+        });     
         
         //Delete Button for Customers
         EventHandler<ActionEvent> custDel = new EventHandler<ActionEvent>(){
@@ -606,7 +620,7 @@ public class Main extends Application{
         };
         delete2.setOnAction(custDel);
     }
-
+    
 
     /**
      * @param args the command line arguments
