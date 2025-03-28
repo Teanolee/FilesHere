@@ -241,9 +241,10 @@ public class Main extends Application{
         customerMid.setAlignment(javafx.geometry.Pos.CENTER);
         customerBottom.setAlignment(javafx.geometry.Pos.CENTER);
         customerTop.setAlignment(javafx.geometry.Pos.CENTER);
-        
+                
         custBookList.getColumns().addAll(custCol1, custCol2, custCol3);
         customerTop.getChildren().addAll(custWelcome);
+        customerMid.getChildren().add(custBookList);
         custBot1.getChildren().add(buy);
         custBot2.getChildren().add(redeemBuy);
         custBot3.getChildren().add(logoutCust);
@@ -255,7 +256,8 @@ public class Main extends Application{
         custBookList.setMaxWidth(227);
         custStart.setTop(customerTop);
         custStart.setBottom(customerBottom);
-       
+        custStart.setCenter(customerMid);
+
         //updates table with current books
         custBookList.setItems(FXCollections.observableArrayList(bList));
     }
@@ -409,8 +411,7 @@ public class Main extends Application{
         sceneTwoCreation(pane2);    //admin choice screen
         
         sceneThreeCreation(pane3,bList);    //This is the Customer buy screen
-        customerMid.getChildren().add(custBookList);
-        pane3.setCenter(customerMid);
+
 
         sceneFourCreation(pane4);   //Customer Checkout 
          
@@ -454,6 +455,7 @@ public class Main extends Application{
                         updateUser(curUser);
                         custWelcome.setText("Welcome " + dispUsername + " you have: " + dispPoints + " Points. "
                         + "Your Status is: " + dispStatus);
+                        custBookList.setItems(FXCollections.observableArrayList(bList));
                         displayScreen.setScene(customerStartScreen);
                         
                     }
