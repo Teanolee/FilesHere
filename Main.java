@@ -475,15 +475,22 @@ public class Main extends Application{
                 displayScreen.setScene(adminCustScreen);
             }
         });
+        
         //LOGGIN OUT
         logout.setOnAction(e -> {
             reset();//resets everything
             displayScreen.setScene(loginScreen);
                 });
+        
         logoutAdmin.setOnAction(e -> {
             //stores in file when done
             bookstore.storeData(cList,bList);
             displayScreen.setScene(loginScreen);});
+        
+        logoutCust.setOnAction(e -> {
+            reset();//resets everything
+            displayScreen.setScene(loginScreen);
+                });
 
         back.setOnAction(e -> displayScreen.setScene(adminScreen));
         back2.setOnAction(e -> displayScreen.setScene(adminScreen));
