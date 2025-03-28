@@ -59,7 +59,7 @@ public class Main extends Application{
     //NOT SURE HOW CHECKOUT GONNA BE IMPLEMENTED, SO CHANGE BOOKSTORE LATER 
     //currently uses arraylist, maybe just add em to the total when you select them ?
     ArrayList<Book> shoppingCart = new ArrayList<Book>(); //for totaling picked books
-    
+   
     int totalCost;
     //Customer stuff
     Customer curUser; //the current user using the account
@@ -87,11 +87,49 @@ public class Main extends Application{
             adminMidUser, adminMidPass, adminMidB2;
 
     VBox adminBook, adminCust;
+    //RESET
+    public void reset(){
+        shoppingCart.clear();
+        //prints out customers
+            for (Customer c : cList){
+                System.out.println(c);
+            }
+        //stores in file when done
+        bookstore.storeData(cList,bList);
+    }
     //for displaying purposes while I figure this shit out
     public void updateUser(Customer c){
        dispUsername = c.getUsername();
        dispPoints = c.getPoints();
        dispStatus = c.getStatus(); 
+    }
+    
+    //Adds selected Books to a list
+    public void purchaseBooks(ArrayList<Book> books,ArrayList<Book> addList){
+        for (Book b: books){
+            if(b.getAvailable()){
+                
+                addList.add(b);
+            }
+        }
+    }
+    //Deletes Books from a List
+    public void deleteBooks(ArrayList<Book> books){
+        for(Book b: books){
+            if(b.getAvailable()){
+                adminBookList.getItems().remove(b);
+                books.remove(b);//removes all books in books from delList
+            }
+        }
+    }
+    //Deletes Customers from a List
+    public void deleteCustomers(ArrayList<Customer> customers){
+        for(Customer c: customers){
+            if(c.getAvailable()){
+                customerList.getItems().remove(c);
+                customers.remove(c);//removes all books in books from delList
+            }
+        }
     }
     public void createButtons(){
             btn = new Button(); 
@@ -334,7 +372,7 @@ public class Main extends Application{
         //loads save data
         bookstore.loadCustomers(cList);//loads from saved data
         bookstore.loadBooks(bList);
-        bookstore.loadBooks(shoppingCart);
+        //bookstore.loadBooks(shoppingCart); //buys whole store TESTING
           
         //Creating Buttons
         createButtons();
@@ -397,8 +435,6 @@ public class Main extends Application{
                     curUser = bookstore.findAccount(user,pass,cList);
                     //Customer temp = bookstore.findAccount(user,pass,cList);
                     if (curUser.getPoints() != -1){
-                        //REMEMBER TO SAVE THE POINTS LATER
-                        
                         updateUser(curUser);
                         custWelcome.setText("Welcome " + dispUsername+" you have: " + dispPoints + " Points. "
                 + "Your Status is: " + dispStatus);
@@ -429,12 +465,7 @@ public class Main extends Application{
         });
         //LOGGIN OUT
         logout.setOnAction(e -> {
-            //prints out customers
-            for (Customer c : cList){
-                System.out.println(c);
-            }
-            //stores in file when done
-            bookstore.storeData(cList,bList);
+            reset();//resets everything
             displayScreen.setScene(loginScreen);
                 });
         logoutAdmin.setOnAction(e -> {
@@ -449,8 +480,11 @@ public class Main extends Application{
         EventHandler<ActionEvent> moneyBuy = new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
+                //finds books selected
+                purchaseBooks(bList,shoppingCart);
                 //totals money needed
                 totalCost = bookstore.totalCost(shoppingCart); //calculates total cost
+              
                 bookstore.checkout(curUser, shoppingCart);
                 curUser.updateStatus();
                 custTC.setText("Total cost of Books: "+totalCost);//changes respective labels
@@ -466,8 +500,11 @@ public class Main extends Application{
         EventHandler<ActionEvent> pointsBuy = new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
+                //Finds Books purchased
+                purchaseBooks(bList,shoppingCart);
                 //totals money needed
                 totalCost = 0; //calculates total cost
+                
                 bookstore.checkout(curUser, shoppingCart);
                 curUser.updateStatus();
                 custTC.setText("Total cost of Books: "+totalCost);//changes respective labels
@@ -484,6 +521,7 @@ public class Main extends Application{
             public void handle(ActionEvent event) {
                 String newUser = addUsername.getText();
                 String newPass = addPassword.getText();
+                
                 Customer newCust = new Customer(newUser, newPass, 0);
                 newCust.updateStatus();
                 cList.add(newCust);
@@ -516,6 +554,27 @@ public class Main extends Application{
             }
         };
         add.setOnAction(bookAdd);
+        
+        //Delete Button for Books
+        EventHandler<ActionEvent> bookDel = new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event){
+                deleteBooks(bList);
+                adminBookList.setItems(FXCollections.observableArrayList(bList));
+                custBookList.setItems(FXCollections.observableArrayList(bList));
+            }
+        };
+        delete.setOnAction(bookDel); //delete button for Books
+        
+        //Delete Button for Customers
+        EventHandler<ActionEvent> custDel = new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event){
+                deleteCustomers(cList);
+                customerList.setItems(FXCollections.observableArrayList(cList));
+            }
+        };
+        delete2.setOnAction(custDel);
     }
 
 
@@ -527,4 +586,3 @@ public class Main extends Application{
     }
 
 }
-
