@@ -65,8 +65,9 @@ public class Main extends Application{
         adminBookList.setItems(FXCollections.observableArrayList(bList));
         custBookList.setItems(FXCollections.observableArrayList(bList));
         customerList.setItems(FXCollections.observableArrayList(cList));
-        
         bookstore.storeData(cList,bList);
+        errorLabel.setText("");
+        errorLabel1.setText("");
     }
     
     //for displaying purposes while I figure this shit out
@@ -421,7 +422,6 @@ public class Main extends Application{
         
         sceneFiveCreation(pane5,bList);//Admin Book
         adminTop.getChildren().add(adminBookList);
-        //adminTop.setPrefWidth(300);
         pane5.setTop(adminTop);
         
         sceneSixCreation(pane6,cList);//Admin Customer
@@ -486,6 +486,9 @@ public class Main extends Application{
         btn3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                reset();
+                adminCustTop.getChildren().clear();
+                adminCustTop.getChildren().add(customerList);
                 displayScreen.setScene(adminCustScreen);
             }
         });
