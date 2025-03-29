@@ -62,11 +62,10 @@ public class Main extends Application{
     //RESET
     public void reset(){
         shoppingCart.clear();
-        //prints out customers
-            for (Customer c : cList){
-                System.out.println(c);
-            }
-        //stores in file when done
+        adminBookList.setItems(FXCollections.observableArrayList(bList));
+        custBookList.setItems(FXCollections.observableArrayList(bList));
+        customerList.setItems(FXCollections.observableArrayList(cList));
+        
         bookstore.storeData(cList,bList);
     }
     
@@ -171,7 +170,7 @@ public class Main extends Application{
 
         adminMid = new HBox(50); adminMidN = new HBox(10);
         adminMidP = new HBox(10); adminMidB = new HBox(10);
-        adminBottom = new HBox(75); adminTop = new HBox();
+        adminBottom = new HBox(75); adminTop = new HBox(500);
 
         adminCustMid = new HBox(50); adminMidUser = new HBox(10);
         adminMidPass = new HBox(10); adminMidB2 = new HBox(10);
@@ -255,7 +254,9 @@ public class Main extends Application{
         customerBottom.setPadding(new Insets(10, 0, 10, 0));
 
         custBookList.setMaxHeight(300);
-        custBookList.setMaxWidth(227);
+        custBookList.setPrefWidth(600);
+        custBookList.setColumnResizePolicy(adminBookList.CONSTRAINED_RESIZE_POLICY);
+
 
         // Use the topContainer instead of just customerTop
         custStart.setTop(topContainer);
@@ -288,7 +289,7 @@ public class Main extends Application{
         customerMid2.setPadding(new Insets(10, 0, 10, 0));
         customerBottom2.setPadding(new Insets(10, 0, 10, 0));
 
-    custBuy.setCenter(buyText);
+        custBuy.setCenter(buyText);
     }
 
     //creating admin book screen
@@ -314,7 +315,6 @@ public class Main extends Application{
         adminBottom.setAlignment(javafx.geometry.Pos.CENTER);        
         adminMid.setAlignment(javafx.geometry.Pos.CENTER);  
         
-        
         adminBookList.getColumns().addAll(adminCol1, adminCol2, adminCol3);
         adminMidN.getChildren().addAll(new Label("Book name"), name);
         adminMidP.getChildren().addAll(new Label("Book Price"), price);
@@ -324,7 +324,8 @@ public class Main extends Application{
         
         //setting max table display height/width
         adminBookList.setMaxHeight(300);
-        adminBookList.setMaxWidth(227);
+        adminBookList.setPrefWidth(600);
+        adminBookList.setColumnResizePolicy(adminBookList.CONSTRAINED_RESIZE_POLICY);
         
         //padding for Middle and Bottom
         adminMid.setPadding(new Insets(10, 0, 0, 0));
@@ -372,8 +373,9 @@ public class Main extends Application{
         
         //setting max table display height/width
         customerList.setMaxHeight(300);
-        customerList.setMaxWidth(286);
-        
+        customerList.setPrefWidth(600);
+        customerList.setColumnResizePolicy(adminBookList.CONSTRAINED_RESIZE_POLICY);
+
         //padding for Middle and Bottom
         adminCustMid.setPadding(new Insets(10, 0, 0, 0));
         adminCustBot.setPadding(new Insets(0, 0, 10, 0));
@@ -400,7 +402,7 @@ public class Main extends Application{
         createTextFields();
 
         //login Screen
-        Label title = new Label("Welcome to the Bookstore App");
+        Label title = new Label("--Welcome to the Bookstore App--");
         FlowPane pane = new FlowPane(Orientation.VERTICAL, 5, 5, title); 
 
         //Admin Screen
@@ -419,6 +421,7 @@ public class Main extends Application{
         
         sceneFiveCreation(pane5,bList);//Admin Book
         adminTop.getChildren().add(adminBookList);
+        //adminTop.setPrefWidth(300);
         pane5.setTop(adminTop);
         
         sceneSixCreation(pane6,cList);//Admin Customer
@@ -463,7 +466,7 @@ public class Main extends Application{
                         displayScreen.setScene(customerStartScreen);
                         
                     }else{
-                         errorLabel.setText("Hey buddy ur password or username is wrong");       
+                         errorLabel.setText("Username or Password is incorrect");       
                                 }    
                     
                 }
@@ -494,6 +497,7 @@ public class Main extends Application{
                 });
         
         logoutAdmin.setOnAction(e -> {
+            reset();
             //stores in file when done
             bookstore.storeData(cList,bList);
             //clearBookSelections(bList);
