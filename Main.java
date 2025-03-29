@@ -23,39 +23,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.collections.FXCollections;
 
-/**
-
-***THINGS TO BE DONE***
-
-- Login screen needs to read from customers.txt to log in
-    - This needs to be implemented at the bottom under btn
-    - We need the login info to disappear after logging out
-        - From the TextFields, not the .txt
-- Implement everything in Customer Book screen
-    - Buy and Buy/Redeem 
-    - Need to properly read from books.txt
-    - Or Bookstore? Idk
-- Implement everything in Admin Book Screen
-    - Delete needs to be implemented
-    - Add needs to write to book.txt or something 
-- Implement everything in Admin Customer Screen
-    - Delete needs to be implemented
-    - Add needs to write to customers.txt or something 
-***The select portion in both tables need to be properly implemented 
-
-**/
-
-
 public class Main extends Application{
+    
     //Java variables --------------------------------------------------------------------
     //loads up starting classes and stuff
     Bookstore bookstore = new Bookstore();
     ArrayList<Customer> cList = new ArrayList<Customer>();
     ArrayList<Book> bList = new ArrayList<Book>();
-    //NOT SURE HOW CHECKOUT GONNA BE IMPLEMENTED, SO CHANGE BOOKSTORE LATER 
-    //currently uses arraylist, maybe just add em to the total when you select them ?
     ArrayList<Book> shoppingCart = new ArrayList<Book>(); //for totaling picked books
-   
     int totalCost;
     //Customer stuff
     Customer curUser; //the current user using the account
@@ -65,7 +40,7 @@ public class Main extends Application{
     
     //labels
     Label custWelcome,custTC,custPrice,errorLabel,errorLabel1;
-        //--------------------------------------------------------------------------------------------------
+     
     //Tables
     TableView<Book> custBookList;
     TableView<Book> adminBookList;
@@ -132,7 +107,7 @@ public class Main extends Application{
         }
     }
     
-    // Method to clear all book selections
+    //Method to clear all book selections
     public void clearBookSelections(ArrayList<Book> books) {
         for (Book book : books) {
             book.setAvailable(false);
@@ -146,6 +121,7 @@ public class Main extends Application{
         }
     }
     
+    //creating the buttons
     public void createButtons(){
             btn = new Button(); 
             btn2 = new Button(); 
@@ -164,6 +140,7 @@ public class Main extends Application{
             addCust = new Button();  
         }
 
+    //setting button text
     public void setButtonText(){
 
         btn.setText("Login"); 
@@ -185,6 +162,7 @@ public class Main extends Application{
 
     }
 
+    //creating HBoxes
     public void createHBox(){
         button = new HBox(); button2 = new HBox(); button3 = new HBox();
         logoutH = new HBox(); customerBottom = new HBox(50);
@@ -200,6 +178,7 @@ public class Main extends Application{
         adminCustBot = new HBox(75); adminCustTop = new HBox();
     }
 
+    //cretaing textfields
     public void createTextFields(){
         username = new TextField(); 
         password = new TextField(); 
@@ -213,6 +192,7 @@ public class Main extends Application{
         errorLabel.setStyle("-fx-text-fill: red;"); // Set text color to red
     }
 
+    //creating login screen
     public void sceneOneCreation(FlowPane login){
         login.setAlignment(javafx.geometry.Pos.CENTER);
         button.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
@@ -223,6 +203,7 @@ public class Main extends Application{
         login.getChildren().add(errorLabel);
     }
 
+    //creating admin screen
     public void sceneTwoCreation(FlowPane admin){
         admin.setAlignment(javafx.geometry.Pos.CENTER);
         button2.setAlignment(javafx.geometry.Pos.CENTER);
@@ -235,6 +216,7 @@ public class Main extends Application{
         admin.getChildren().addAll(button2, button3, logoutH);
     }
 
+    //creating customer book screen
     public void sceneThreeCreation(BorderPane custStart,ArrayList<Book> bList){
 
         custBookList = new TableView<>();
@@ -284,6 +266,7 @@ public class Main extends Application{
         custBookList.setItems(FXCollections.observableArrayList(bList));
     }
 
+    //creating customer purchase screen
     public void sceneFourCreation(BorderPane custBuy){
         
         buyText = new VBox();
@@ -308,6 +291,7 @@ public class Main extends Application{
     custBuy.setCenter(buyText);
     }
 
+    //creating admin book screen
     public void sceneFiveCreation(BorderPane adminBookScreen,ArrayList<Book> bList){
 
         adminBookList = new TableView<>();
@@ -354,6 +338,7 @@ public class Main extends Application{
 
     }   
 
+    //creating admin customer screen
     public void sceneSixCreation(BorderPane adminCustScreen,ArrayList<Customer> cList){
 
         customerList = new TableView<>();
@@ -427,7 +412,6 @@ public class Main extends Application{
         BorderPane pane6 = new BorderPane();            //Admin Customer Screen
 
         //creating the panes and it's properties
-        
         sceneOneCreation(pane);//login Screen
         sceneTwoCreation(pane2);//admin choice screen
         sceneThreeCreation(pane3,bList); //This is the Customer buy screen
@@ -455,7 +439,8 @@ public class Main extends Application{
         displayScreen.show();
         
         //button functions----------------------------------------------------------------------
-
+        
+        //handling login events
         EventHandler<ActionEvent> loginEvent = new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent e){
@@ -484,7 +469,6 @@ public class Main extends Application{
                 }
             }
         };
-
         btn.setOnAction(loginEvent);
 
         //Book Button for admin
@@ -547,7 +531,6 @@ public class Main extends Application{
                 displayScreen.setScene(customerCostScreen);
             }
         };
-        
         buy.setOnAction(moneyBuy);//Purchase with CAD
         
         //Buying with points
@@ -657,7 +640,6 @@ public class Main extends Application{
         delete2.setOnAction(custDel);
     }
     
-
     /**
      * @param args the command line arguments
      */
