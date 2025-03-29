@@ -453,7 +453,7 @@ public class Main extends Application{
                 username.clear(); //clears textfields
                 password.clear();
                 if(user.equals("admin") && pass.equals("admin")){
-     
+                    reset();
                     displayScreen.setScene(adminScreen);
                 } else {
                     
@@ -493,6 +493,7 @@ public class Main extends Application{
         //LOGGIN OUT
         logout.setOnAction(e -> {
             reset();//resets everything
+            clearBookSelections(bList);
             displayScreen.setScene(loginScreen);
                 });
         
@@ -561,8 +562,8 @@ public class Main extends Application{
             errorLabel1.setText("Insufficient points to redeem for the selected books."); 
             shoppingCart.clear();
         }
-    }
-};
+        }
+        };
         redeemBuy.setOnAction(pointsBuy);//Purchase with Points
         
         //Add customers for admin
