@@ -8,12 +8,28 @@ import javafx.beans.property.SimpleBooleanProperty;
  * @author 
  */
 /* CUSTOMER */
-
+//Gold status when >1000 points
+class GoldState implements StatusState{
+    @Override
+    public String handle(){
+        return "Gold";
+    }
+    
+}
+//Silver status <1000 points
+class SilverState implements StatusState{
+    @Override
+    public String handle(){
+        return "Silver";
+    }
+    
+}
 public class Customer extends User {
     int points;//points used to redeem books
     String status;
     private final SimpleBooleanProperty available = new SimpleBooleanProperty();
-
+    StatusContext statusSender = new StatusContext();
+    
     public Customer(String username,String password, int points){
         this.username = username;
         this.password = password;
@@ -26,9 +42,11 @@ public class Customer extends User {
     //Silver  < 1000 points
     public void updateStatus(){
         if (points >= 1000){
-            status = "Gold";
+            statusSender.setState(new GoldState());
+            status = statusSender.request();
         } else {
-            status = "Silver";
+            statusSender.setState(new SilverState());
+            status = statusSender.request();
         }
     }
     
