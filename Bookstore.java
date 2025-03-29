@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package project;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -159,7 +155,6 @@ public class Bookstore {
         return total; // The amount the customer needs to pay
     }
 
-
     //  Checkout using ONLY points.
     // Succeeds ONLY if the customer has enough points to cover the ENTIRE cost.
     // If successful, deducts the points and updates status.
@@ -188,29 +183,4 @@ public class Bookstore {
             return false; // Purchase failed due to insufficient points
         }
     }
-/*
-    public static void main(String[] args) {
-        //admin shit
-        Bookstore b = new Bookstore();
-        ArrayList<Customer> customers = new ArrayList<>();
-        ArrayList<Book> books = new ArrayList<>();
-        b.loadCustomers(customers);
-        b.loadBooks(books);
-       
-        
-        //customers.add(b.addCustomer("balls","mcgee")); //testing 
-        //books.add(b.addBook("Ghost riding",200));
-        b.checkout(customers.get(1), books);
-       
-        b.storeData(customers,books);
-        
-       //prints out entire thing
-        for (Customer c : customers){
-            System.out.println(c);
-        }
-        for (Book book : books){
-            System.out.println(book);
-        }
-    }*/
-
 }
