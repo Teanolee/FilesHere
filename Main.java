@@ -39,7 +39,7 @@ public class Main extends Application{
     String dispStatus = "default";
     
     //labels
-    Label custWelcome,custTC,custPrice,errorLabel,errorLabel1;
+    Label custWelcome,custTC,custPrice,errorLabel,errorLabel1,errorLabel2,errorLabel3;
      
     //Tables
     TableView<Book> custBookList;
@@ -57,7 +57,7 @@ public class Main extends Application{
             adminMidP, adminMidB, adminCustTop, adminCustMid, adminCustBot,
             adminMidUser, adminMidPass, adminMidB2;
     
-    VBox buyText, topContainer;
+    VBox buyText, topContainer, adminCustBot2, adminBottom2;
   
     //RESET
     public void reset(){
@@ -68,6 +68,7 @@ public class Main extends Application{
         bookstore.storeData(cList,bList);
         errorLabel.setText("");
         errorLabel1.setText("");
+        
     }
     
     //for displaying purposes while I figure this shit out
@@ -119,6 +120,27 @@ public class Main extends Application{
         for (Customer customer : cust) {
             customer.setAvailable(false);
         }
+    }
+    
+    //returns where the book us already in the list or not
+    public boolean bookInList(ArrayList<Book> books,String name){
+        for(Book b: books){
+            if(b.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+    
+    //returns whether the customer already exists or not
+    public boolean customerExists(ArrayList<Customer> customers,String name){
+        for (Customer c: customers){
+            if(c.getUsername().equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
     
     //creating the buttons
@@ -188,8 +210,13 @@ public class Main extends Application{
         addPassword = new TextField();
         errorLabel = new Label("");
         errorLabel1 = new Label("");// Initialize error label
+        errorLabel2 = new Label("");
+        errorLabel3 = new Label("");
         errorLabel1.setStyle("-fx-text-fill: red;");
         errorLabel.setStyle("-fx-text-fill: red;"); // Set text color to red
+        errorLabel2.setStyle("-fx-text-fill: red;");
+        errorLabel3.setStyle("-fx-text-fill: red;");
+
     }
 
     //creating login screen
@@ -296,6 +323,7 @@ public class Main extends Application{
     //creating admin book screen
     public void sceneFiveCreation(BorderPane adminBookScreen,ArrayList<Book> bList){
 
+        adminBottom2 = new VBox();
         adminBookList = new TableView<>();
         adminBookList.setEditable(true);
         //BOOK TITLE
@@ -315,14 +343,15 @@ public class Main extends Application{
         adminTop.setAlignment(javafx.geometry.Pos.CENTER);
         adminBottom.setAlignment(javafx.geometry.Pos.CENTER);        
         adminMid.setAlignment(javafx.geometry.Pos.CENTER);  
-        
+        adminBottom2.setAlignment(javafx.geometry.Pos.CENTER);        
+                
         adminBookList.getColumns().addAll(adminCol1, adminCol2, adminCol3);
         adminMidN.getChildren().addAll(new Label("Book name"), name);
         adminMidP.getChildren().addAll(new Label("Book Price"), price);
         adminMidB.getChildren().add(add);
         adminMid.getChildren().addAll(adminMidN, adminMidP, adminMidB);
         adminBottom.getChildren().addAll(delete, back);
-        
+        adminBottom2.getChildren().addAll(errorLabel3, adminBottom);
         //setting max table display height/width
         adminBookList.setMaxHeight(300);
         adminBookList.setPrefWidth(600);
@@ -331,9 +360,10 @@ public class Main extends Application{
         //padding for Middle and Bottom
         adminMid.setPadding(new Insets(10, 0, 0, 0));
         adminBottom.setPadding(new Insets(0, 0, 10, 0));
+        adminBottom2.setPadding(new Insets(0, 0, 10, 0));
         
         adminBookScreen.setCenter(adminMid);
-        adminBookScreen.setBottom(adminBottom);
+        adminBookScreen.setBottom(adminBottom2);
 
         adminBookList.setItems(FXCollections.observableArrayList(bList));
 
@@ -343,6 +373,7 @@ public class Main extends Application{
     //creating admin customer screen
     public void sceneSixCreation(BorderPane adminCustScreen,ArrayList<Customer> cList){
 
+        adminCustBot2 = new VBox();
         customerList = new TableView<>();
         customerList.setEditable(true);
 
@@ -364,6 +395,7 @@ public class Main extends Application{
         adminCustTop.setAlignment(javafx.geometry.Pos.CENTER);
         adminCustBot.setAlignment(javafx.geometry.Pos.CENTER);        
         adminCustMid.setAlignment(javafx.geometry.Pos.CENTER);
+        adminCustBot2.setAlignment(javafx.geometry.Pos.CENTER);
 
         customerList.getColumns().addAll(adminCustCol1, adminCustCol2, adminCustCol3, adminCustCol4);
         adminMidUser.getChildren().addAll(new Label("Username"), addUsername);
@@ -371,6 +403,7 @@ public class Main extends Application{
         adminMidB2.getChildren().add(addCust);
         adminCustMid.getChildren().addAll(adminMidUser, adminMidPass, adminMidB2);
         adminCustBot.getChildren().addAll(delete2, back2);
+        adminCustBot2.getChildren().addAll(errorLabel2,adminCustBot);
         
         //setting max table display height/width
         customerList.setMaxHeight(300);
@@ -380,9 +413,10 @@ public class Main extends Application{
         //padding for Middle and Bottom
         adminCustMid.setPadding(new Insets(10, 0, 0, 0));
         adminCustBot.setPadding(new Insets(0, 0, 10, 0));
+        adminCustBot2.setPadding(new Insets(0, 0, 10, 0));
         
         adminCustScreen.setCenter(adminCustMid);
-        adminCustScreen.setBottom(adminCustBot);
+        adminCustScreen.setBottom(adminCustBot2);
 
         customerList.setItems(FXCollections.observableArrayList(cList));
     }
@@ -433,8 +467,8 @@ public class Main extends Application{
         Scene adminScreen = new Scene(pane2, 300, 250);
         Scene customerStartScreen = new Scene(pane3, 400, 350);
         Scene customerCostScreen = new Scene(pane4, 300, 250);
-        Scene adminBookScreen = new Scene(pane5,600,380);
-        Scene adminCustScreen = new Scene(pane6, 600, 380);
+        Scene adminBookScreen = new Scene(pane5,600,390);
+        Scene adminCustScreen = new Scene(pane6, 600, 390);
 
         //setting up the scenes (The important code) 
         displayScreen.setTitle("Bookstore");
@@ -576,9 +610,16 @@ public class Main extends Application{
                 String newUser = addUsername.getText();
                 String newPass = addPassword.getText();
                 
-                Customer newCust = new Customer(newUser, newPass, 0);
-                newCust.updateStatus();
-                cList.add(newCust);
+                //checking if customer exists
+                if(customerExists(cList,newUser)){
+                    errorLabel2.setText("Customer already exists");
+                }else{
+                    Customer newCust = new Customer(newUser, newPass, 0);
+                    newCust.updateStatus();
+                    cList.add(newCust);
+                    errorLabel2.setText("");
+
+                }
                 
                 //clearing the textfields
                 addUsername.clear();
@@ -599,9 +640,17 @@ public class Main extends Application{
                 String bookName = name.getText();
                 int bookPrice = Integer.parseInt(price.getText());
                 
-                Book newBook = new Book(bookName, bookPrice);
-                bList.add(newBook);
-                
+                //checking for duplicates
+                if(bookInList(bList,bookName)){
+                    errorLabel3.setText("Book already exists");
+                }else{
+                    //make the book and add it
+                    Book newBook = new Book(bookName, bookPrice);
+                    bList.add(newBook);
+                    errorLabel3.setText("");
+
+                }
+          
                 //clearing textfields
                 name.clear();
                 price.clear();
